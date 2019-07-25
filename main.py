@@ -37,9 +37,11 @@ def postgres_demo(request):
     # which helps keep your GCF instances under SQL connection limits.
     if not pg_pool:
         try:
+            print("connecting...")
             __connect(f'/cloudsql/{CONNECTION_NAME}')
         except OperationalError:
             # If production settings fail, use local development ones
+            print("failed trying localhost")
             __connect('localhost')
 
     # Remember to close SQL resources declared while running this function.
