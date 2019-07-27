@@ -57,7 +57,7 @@ def execute_sql(sql):
         cursor.execute(sql)
         results = cursor.fetchone()
         pg_pool.putconn(conn)
-        return str(results[0])
+        return results[0]
 
 def postgres_demo(request):
   LOGGER.info("Checking apple_health_data table exists in the database")
