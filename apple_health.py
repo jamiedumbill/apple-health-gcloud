@@ -17,8 +17,8 @@ def check_table_exists_sql(table):
 
 def create_table_sql():
     return  ' '.join(['CREATE TABLE apple_health_data (',
-                        'record_type AS TEXT,',
-                        'unit AS TEXT,',
-                        'time_ceated AS TIMESTAMPTZ,',
-                        'value AS DECIMAL',
+                        'record_type TEXT NOT NULL,',
+                        'unit TEXT NOT NULL,',
+                        'time_ceated TIMESTAMPTZ NOT NULL,',
+                        'value DECIMAL NOT NULL',
                         ')'])
