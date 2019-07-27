@@ -54,10 +54,14 @@ def execute_sql(sql):
     # Keep any declared in global scope (e.g. pg_pool) for later reuse.
     with pg_pool.getconn() as conn:
         cursor = conn.cursor()
-        cursor.execute(sql)
-        results = cursor.fetchone()
-        pg_pool.putconn(conn)
-        return results[0]
+        try:
+          cursor.execute(sql)
+          results = cursor.fetchall()
+        except Exception as e:
+          LOGGER.error("Problem with query %s", e)
+        finally:
+          pg_pool.putconn(conn)
+        return results
 
 def postgres_demo(request):
   LOGGER.info("Checking apple_health_data table exists in the database")
