@@ -1,9 +1,13 @@
 from os import getenv
+import logging
 
 from psycopg2 import OperationalError
 from psycopg2.pool import SimpleConnectionPool
 
 from apple_health import *
+
+logging.basicConfig(level=logging.DEBUG)
+LOGGER = logging.getLogger(__name__)
 
 # TODO(developer): specify SQL connection details
 CONNECTION_NAME = getenv('INSTANCE_CONNECTION_NAME')
@@ -56,5 +60,9 @@ def execute_sql(sql):
         return str(results[0])
 
 def postgres_demo(request):
-  check_table_sql = check_table_exists_sql('APPLE_HEALTH_DATA')
-  return execute_sql(check_table_sql)
+  LOGGER.info("Checking apple_health_data table exists in the database")
+  table_exists = execute_sql(check_table_exists_sql('apple_health_data'))
+  if not table_exists:
+    LOGGER.info("apple_health_data does not exists creating now")
+    execute_sql(create_table_sql())
+  return (check_table_sql)
