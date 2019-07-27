@@ -62,6 +62,7 @@ def execute_sql(sql):
             results = "No records"
         except Exception as e:
           LOGGER.error("Problem with query %s", e)
+          results = "Error"
         finally:
           pg_pool.putconn(conn)
         return results
