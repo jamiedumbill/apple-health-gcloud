@@ -3,6 +3,8 @@ from os import getenv
 from psycopg2 import OperationalError
 from psycopg2.pool import SimpleConnectionPool
 
+from apple_health import *
+
 # TODO(developer): specify SQL connection details
 CONNECTION_NAME = getenv('INSTANCE_CONNECTION_NAME')
 DB_USER = getenv('POSTGRES_USER')
@@ -29,7 +31,7 @@ def __connect(host):
     pg_pool = SimpleConnectionPool(1, 1, **pg_config)
 
 
-def postgres_demo(request):
+def sql(request):
     global pg_pool
 
     # Initialize the pool lazily, in case SQL access isn't needed for this
@@ -48,7 +50,11 @@ def postgres_demo(request):
     # Keep any declared in global scope (e.g. pg_pool) for later reuse.
     with pg_pool.getconn() as conn:
         cursor = conn.cursor()
-        cursor.execute('SELECT NOW() as now')
+        cursor.execute(sql)
         results = cursor.fetchone()
         pg_pool.putconn(conn)
         return str(results[0])
+
+def postgres_demo(request):
+  check_table_sql = check_table_exists_sql('APPLE_HEALTH_DATA')
+  return sql(check_table_sql)
