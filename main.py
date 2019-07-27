@@ -56,7 +56,10 @@ def execute_sql(sql):
         cursor = conn.cursor()
         try:
           cursor.execute(sql)
-          results = cursor.fetchall()
+          if cursor.rowcount() > 0:
+            results = cursor.fetchall()
+          else:
+            results = "No records"
         except Exception as e:
           LOGGER.error("Problem with query %s", e)
         finally:
@@ -68,7 +71,7 @@ def postgres_demo(request):
   table_exists_results = execute_sql(check_table_exists_sql('apple_health_data'))
   table_exists = table_exists_results[0][0]
   if not table_exists:
-    LOGGER.info("apple_health_data does not exists creating now")
+    LOGGER.info("apple_health_data does not exist creating now")
     execute_sql(create_table_sql())
   else:
     LOGGER.info("table_exists (%s) is %s apple_health_data exists", type(table_exists), table_exists)
