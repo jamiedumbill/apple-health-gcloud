@@ -31,7 +31,7 @@ def __connect(host):
     pg_pool = SimpleConnectionPool(1, 1, **pg_config)
 
 
-def sql(request):
+def execute_sql(sql):
     global pg_pool
 
     # Initialize the pool lazily, in case SQL access isn't needed for this
@@ -57,4 +57,4 @@ def sql(request):
 
 def postgres_demo(request):
   check_table_sql = check_table_exists_sql('APPLE_HEALTH_DATA')
-  return sql(check_table_sql)
+  return execute_sql(check_table_sql)

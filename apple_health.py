@@ -9,9 +9,8 @@ def AppleHealthRecord(Object):
         self.value = value
 
 def check_table_exists_sql(table):
-    sql =  ''.join(['SELECT EXISTS ( ',
+    return  ''.join(['SELECT EXISTS ( ',
                     'SELECT 1 ',
                     'FROM   information_schema.tables ',
                     'WHERE  table_name = \'' + table + '\'',
                     ');'])
-    return sql    
