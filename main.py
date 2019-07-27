@@ -65,4 +65,6 @@ def postgres_demo(request):
   if not table_exists:
     LOGGER.info("apple_health_data does not exists creating now")
     execute_sql(create_table_sql())
+  else:
+    LOGGER.info("table_exists is %s apple_health_data exists", table_exists)
   return (table_exists)
