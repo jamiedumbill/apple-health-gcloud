@@ -65,10 +65,10 @@ def execute_sql(sql):
 
 def postgres_demo(request):
   LOGGER.info("Checking apple_health_data table exists in the database")
-  table_exists = execute_sql(check_table_exists_sql('apple_health_data'))
-  if not table_exists:
+  table_exists_results = execute_sql(check_table_exists_sql('apple_health_data'))
+  if not table_exists_results[0]:
     LOGGER.info("apple_health_data does not exists creating now")
     execute_sql(create_table_sql())
   else:
-    LOGGER.info("table_exists (%s) is %s apple_health_data exists", type(table_exists), table_exists)
-  return (table_exists)
+    LOGGER.info("table_exists (%s) is %s apple_health_data exists", type(table_exists_results), table_exists_results[0])
+  return table_exists_results[0]
