@@ -99,7 +99,7 @@ def new_record(request):
 
 def new_records(request):
   LOGGER.info("adding record from json")
-  insert_many_apple_health_record_sql([AppleHealthRecord(**r) for r in request.get_json()])
+  execute_sql(insert_many_apple_health_record_sql([AppleHealthRecord(**r) for r in request.get_json()]))
   return ''.join(['row count is now ', row_count(request)])  
 
 def fresh_start(request):
