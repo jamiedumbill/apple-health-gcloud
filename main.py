@@ -10,10 +10,10 @@ logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
 # TODO(developer): specify SQL connection details
-CONNECTION_NAME = getenv('INSTANCE_CONNECTION_NAME')
-DB_USER = getenv('POSTGRES_USER')
-DB_PASSWORD = getenv('POSTGRES_PASSWORD')
-DB_NAME = getenv('POSTGRES_DATABASE')
+CONNECTION_NAME = getenv('INSTANCE_CONNECTION_NAME', 'localhost')
+DB_USER = getenv('POSTGRES_USER', 'postgres')
+DB_PASSWORD = getenv('POSTGRES_PASSWORD', '')
+DB_NAME = getenv('POSTGRES_DATABASE', 'applehealth')
 
 pg_config = {
   'user': DB_USER,
@@ -64,6 +64,7 @@ def execute_sql(sql):
           LOGGER.error("Problem with query %s", e)
           results = "Error"
         finally:
+          conn.commit()
           pg_pool.putconn(conn)
         return results
 
@@ -75,5 +76,8 @@ def postgres_demo(request):
     LOGGER.info("apple_health_data does not exist creating now")
     execute_sql(create_table_sql())
   else:
-    LOGGER.info("table_exists (%s) is %s apple_health_data exists", type(table_exists), table_exists)
+    LOGGER.info("table_exists is %s apple_health_data exists", table_exists)
   return str(table_exists)
+
+if __name__ == "__main__":
+  postgres_demo('')
