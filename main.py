@@ -6,7 +6,7 @@ from psycopg2.pool import SimpleConnectionPool
 
 from apple_health import *
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s  %(name)s  %(levelname)s: %(message)s')
 LOGGER = logging.getLogger(__name__)
 
 # TODO(developer): specify SQL connection details
@@ -69,14 +69,31 @@ def execute_sql(sql):
         return results
 
 def postgres_demo(request):
-  LOGGER.info("Checking apple_health_data table exists in the database")
-  table_exists_results = execute_sql(check_table_exists_sql('apple_health_data'))
-  table_exists = table_exists_results[0][0]
+  LOGGER.info("checking apple_health_data table exists in the database")
+  table_exists = execute_sql(check_table_exists_sql('apple_health_data'))[0][0]
+
   if not table_exists:
     LOGGER.info("apple_health_data does not exist creating now")
     execute_sql(create_table_sql())
   else:
     LOGGER.info("table_exists is %s apple_health_data exists", table_exists)
+
+  LOGGER.info("truncating apple_health_data")
+  execute_sql(truncate_table_sql('apple_health_data'))
+
+  row_count = execute_sql(row_count_sql('apple_health_data'))[0][0]
+  LOGGER.info("row count after truncating apple_health_data is %s", row_count)
+
+  LOGGER.info("inserting test row")
+  record = AppleHealthRecord('HKQuantityTypeIdentifierBodyMassIndex','count','2015-07-13T07:22:59-04:00',25.6421)
+  execute_sql(insert_apple_health_record_sql(record))
+
+  row_count = execute_sql(row_count_sql('apple_health_data'))[0][0]
+  LOGGER.info("row count after inserting test row is %s", row_count)
+
+  LOGGER.info("truncating apple_health_data")
+  execute_sql(truncate_table_sql('apple_health_data'))
+
   return str(table_exists)
 
 if __name__ == "__main__":
