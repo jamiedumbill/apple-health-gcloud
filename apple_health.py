@@ -12,6 +12,9 @@ class AppleHealthRecord(object):
     def to_insert_sql(self):
         return "('%s', '%s', '%s', %s)" % (self.record_type, self.unit, self.time_created, self.record_value)
 
+    def __str__(self):
+        return self.to_insert_sql()
+
 def check_table_exists_sql(table):
     return  ''.join(['SELECT EXISTS ( ',
                     'SELECT 1 ',

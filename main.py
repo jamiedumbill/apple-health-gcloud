@@ -1,8 +1,10 @@
 from os import getenv
+from collections import namedtuple
 import logging
 
 from psycopg2 import OperationalError
 from psycopg2.pool import SimpleConnectionPool
+
 
 from apple_health import *
 
@@ -68,7 +70,34 @@ def execute_sql(sql):
           pg_pool.putconn(conn)
         return results
 
-def postgres_demo(request):
+def truncate(request):
+  LOGGER.info("truncating apple_health_data")
+  execute_sql(truncate_table_sql('apple_health_data'))
+
+def row_count(request):
+  rows = execute_sql(row_count_sql('apple_health_data'))[0][0]
+  LOGGER.info("row count of apple_health_data is %s", rows)
+  return rows
+
+def insert_test_row(request):
+  LOGGER.info("inserting test row")
+  record = AppleHealthRecord('HKQuantityTypeIdentifierBodyMassIndex','count','2015-07-13T07:22:59-04:00',25.6421)
+  insert_row(record)
+
+def insert_named_tuple(d):
+  ahr = AppleHealthRecord(**d)
+  insert_row(ahr)
+
+def insert_row(record):
+  LOGGER.info("inserting row %s", record)
+  execute_sql(insert_apple_health_record_sql(record))  
+
+def new_record(request):
+  LOGGER.info("adding record from json")
+  insert_named_tuple(request.get_json())
+  return 'row count is now %s', row_count(request)
+
+def local_test(request):
   LOGGER.info("checking apple_health_data table exists in the database")
   table_exists = execute_sql(check_table_exists_sql('apple_health_data'))[0][0]
 
@@ -78,23 +107,20 @@ def postgres_demo(request):
   else:
     LOGGER.info("table_exists is %s apple_health_data exists", table_exists)
 
-  LOGGER.info("truncating apple_health_data")
-  execute_sql(truncate_table_sql('apple_health_data'))
-
-  row_count = execute_sql(row_count_sql('apple_health_data'))[0][0]
-  LOGGER.info("row count after truncating apple_health_data is %s", row_count)
-
-  LOGGER.info("inserting test row")
-  record = AppleHealthRecord('HKQuantityTypeIdentifierBodyMassIndex','count','2015-07-13T07:22:59-04:00',25.6421)
-  execute_sql(insert_apple_health_record_sql(record))
-
-  row_count = execute_sql(row_count_sql('apple_health_data'))[0][0]
-  LOGGER.info("row count after inserting test row is %s", row_count)
-
-  LOGGER.info("truncating apple_health_data")
-  execute_sql(truncate_table_sql('apple_health_data'))
+  truncate(request)
+  row_count(request)
+  insert_test_row(request)
+  row_count(request)
+  insert_named_tuple(d = {
+    'record_type': 'HKQuantityTypeIdentifierBodyMassIndex',
+    'unit': 'count',
+    'time_created': '2015-07-13T07:22:59-04:00',
+    'record_value': 25.6421
+  })
+  row_count(request)
+  truncate(request)
 
   return str(table_exists)
 
 if __name__ == "__main__":
-  postgres_demo('')
+  local_test('')
