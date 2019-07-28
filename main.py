@@ -97,6 +97,12 @@ def new_record(request):
   insert_named_tuple(request.get_json())
   return ''.join(['row count is now ', row_count(request)])
 
+def new_records(request):
+  LOGGER.info("adding record from json")
+  for record in request.get_json():
+    insert_named_tuple(record)
+  return ''.join(['row count is now ', row_count(request)])  
+
 def fresh_start(request):
   LOGGER.info("fresh start...")
   LOGGER.info("dropping apple_health_data") 
