@@ -95,7 +95,7 @@ def insert_row(record):
 def new_record(request):
   LOGGER.info("adding record from json")
   insert_named_tuple(request.get_json())
-  return 'row count is now %s', row_count(request)
+  return ''.join(['row count is now ', row_count(request)])
 
 def fresh_start(request):
   LOGGER.info("fresh start...")
