@@ -97,7 +97,13 @@ def new_record(request):
   insert_named_tuple(request.get_json())
   return 'row count is now %s', row_count(request)
 
-def local_test(request):
+def fresh_start(request):
+  LOGGER.info("fresh start...")
+  LOGGER.info("dropping apple_health_data") 
+  execute_sql(drop_table_sql('apple_health_data'))
+  create_if_table_does_not_exist(request)
+
+def create_if_table_does_not_exist(request):
   LOGGER.info("checking apple_health_data table exists in the database")
   table_exists = execute_sql(check_table_exists_sql('apple_health_data'))[0][0]
 
@@ -107,20 +113,22 @@ def local_test(request):
   else:
     LOGGER.info("table_exists is %s apple_health_data exists", table_exists)
 
+def local_test(request):
+  fresh_start(request)
   truncate(request)
   row_count(request)
   insert_test_row(request)
   row_count(request)
   insert_named_tuple(d = {
-    'record_type': 'HKQuantityTypeIdentifierBodyMassIndex',
-    'unit': 'count',
-    'time_created': '2015-07-13T07:22:59-04:00',
-    'record_value': 25.6421
+    "record_type": "HKQuantityTypeIdentifierBodyMassIndex",
+    "unit": "count",
+    "time_created": "2015-07-13T07:22:59-04:00",
+    "record_value": 25.6421
   })
   row_count(request)
   truncate(request)
 
-  return str(table_exists)
+  return str('test complete')
 
 if __name__ == "__main__":
   local_test('')

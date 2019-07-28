@@ -30,6 +30,9 @@ def create_table_sql():
                         'record_value DECIMAL NOT NULL',
                         ') TABLESPACE pg_default;'])
 
+def drop_table_sql(table):
+        return f'DROP TABLE IF EXISTS {table}'
+
 def truncate_table_sql(table):
         return f'TRUNCATE TABLE {table}'
 
