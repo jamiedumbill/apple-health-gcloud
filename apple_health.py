@@ -31,13 +31,18 @@ def create_table_sql():
                         ') TABLESPACE pg_default;'])
 
 def drop_table_sql(table):
-        return f'DROP TABLE IF EXISTS {table}'
+    return f'DROP TABLE IF EXISTS {table}'
 
 def truncate_table_sql(table):
-        return f'TRUNCATE TABLE {table}'
+    return f'TRUNCATE TABLE {table}'
 
 def row_count_sql(table):
-        return f'SELECT COUNT(1) FROM {table}'
+    return f'SELECT COUNT(1) FROM {table}'
 
 def insert_apple_health_record_sql(ahr):
-        return f'INSERT INTO apple_health_data (record_type, unit, time_created, record_value) VALUES {ahr.to_insert_sql()}'
+    return f'INSERT INTO apple_health_data (record_type, unit, time_created, record_value) VALUES {ahr.to_insert_sql()}'
+
+
+def insert_many_apple_health_record_sql(ahrs):
+    values = ','.join([a.to_insert_sql() for a in ahrs])
+    return f'INSERT INTO apple_health_data (record_type, unit, time_created, record_value) VALUES {values}'    
