@@ -8,7 +8,7 @@ from psycopg2.pool import SimpleConnectionPool
 
 from apple_health import *
 
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s  %(name)s  %(levelname)s: %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s  %(name)s  %(levelname)s: %(message)s')
 LOGGER = logging.getLogger(__name__)
 
 # TODO(developer): specify SQL connection details
@@ -89,7 +89,7 @@ def insert_named_tuple(d):
   insert_row(ahr)
 
 def insert_row(record):
-  LOGGER.info("inserting row %s", record)
+  LOGGER.debug("inserting row %s", record)
   execute_sql(insert_apple_health_record_sql(record))  
 
 def new_record(request):
