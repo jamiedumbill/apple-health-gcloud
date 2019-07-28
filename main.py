@@ -77,7 +77,7 @@ def truncate(request):
 def row_count(request):
   rows = execute_sql(row_count_sql('apple_health_data'))[0][0]
   LOGGER.info("row count of apple_health_data is %s", rows)
-  return rows
+  return str(rows)
 
 def insert_test_row(request):
   LOGGER.info("inserting test row")
