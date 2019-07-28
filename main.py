@@ -56,7 +56,7 @@ def execute_sql(sql):
         cursor = conn.cursor()
         try:
           cursor.execute(sql)
-          if cursor.rowcount() > 0:
+          if cursor.rowcount > 0:
             results = cursor.fetchall()
           else:
             results = "No records"
